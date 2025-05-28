@@ -80,9 +80,16 @@ var (
 )
 
 func init() {
+	// Get JPLEPH location from environment variable
+	EphemFilename = os.Getenv("EPHEM_FILE")
+	if EphemFilename == "" {
+		EphemFilename = "JPLEPH"
+	}
+	fmt.Printf("JPLEPH file: %s", EphemFilename)
+
 	var jd_beg, jd_end float64
 	var de_num int16
-	if error := EphemOpen("JPLEPH", &jd_beg, &jd_end, &de_num); error != 0 {
+	if error := EphemOpen(EphemFilename, &jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Println("ephManager.go: init(). Error from EphemEpen. error= ", error)
 		os.Exit(int(error))
 	}
