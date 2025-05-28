@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"os"
 	"testing"
 )
 
@@ -64,8 +63,7 @@ func TestReadEphemHeader(t *testing.T) {
 	expectedEh.LPT[0] = 899
 	expectedEh.LPT[1] = 10
 	expectedEh.LPT[2] = 4
-	ephemFilename := GetEphemFilename()
-	fp, err := os.Open(ephemFilename)
+	fp, err := EphemFile.Open("JPLEPH")
 	if err != nil {
 		fmt.Println("Error opening JPLEPH")
 		t.Fail()

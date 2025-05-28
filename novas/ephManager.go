@@ -20,6 +20,7 @@ import (
 	"io"
 	"math"
 	"os"
+	"embed"
 )
 
 // Order matters.
@@ -57,9 +58,10 @@ const (
 	SEEKEND   = 2 // Seek into file from end
 )
 
-var (
-	EphemFilename string
+//go:embed JPLEPH
+var EphemFile embed.FS
 
+var (
 	eh EphemHeader
 
 	//LPT [3]int32 // LPT[3] int[]
@@ -86,16 +88,6 @@ func init() {
 		fmt.Println("ephManager.go: init(). Error from EphemEpen. error= ", error)
 		os.Exit(int(error))
 	}
-}
-
-func GetEphemFilename() string {
-	// Get JPLEPH location from environment variable
-	ephemFilename := os.Getenv("EPHEM_FILE")
-	if ephemFilename == "" {
-		ephemFilename = "JPLEPH"
-		fmt.Printf("Using default ephem file: %s", ephemFilename)
-	}
-	return ephemFilename
 }
 
 // readFloqt64Slice is a helper function to read 4 bytes from file and cast as int
@@ -176,21 +168,21 @@ func ReadBinary2EphemHeader(r io.Reader) error {
 }
 
 func ReadBinary2Buffer(offset int64) error {
-	// Open JPL file ephem_name readonly
-	ephemFilename := GetEphemFilename()
-	EPHFILE, err := os.Open(ephemFilename)
+	EPHFILE, err := EphemFile.ReadFile("JPLEPH")
 	if err != nil {
-		fmt.Println("Error opening JPL file")
+		fmt.Println("Error reading JPL file")
 		return err
 	}
-	defer EPHFILE.Close()
-	_, serr := EPHFILE.Seek(offset, os.SEEK_SET)
+
+	reader := bytes.NewReader(EPHFILE)
+
+	_, serr := reader.Seek(offset, io.SeekStart)
 	if serr != nil {
 		fmt.Println("Error seeking using offset: ", offset)
 		return serr
 	}
 	//fmt.Println("sought to: ", of)
-	err = binary.Read(EPHFILE, binary.LittleEndian, Buffer)
+	err = binary.Read(reader, binary.LittleEndian, Buffer)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -317,17 +309,14 @@ FILE *EPHFILE = NULL;
 func EphemOpen(jd_begin *float64, jd_end *float64,
 	de_number *int16) int16 {
 
-	// save for later when reading Buffer contents
-	EphemFilename = GetEphemFilename()
-
 	var i int16
 
 	if EPHFILE != nil {
 		EPHFILE.Close()
 	}
 
-	// Open JPL file ephem_name readonly
-	EPHFILE, err := os.Open(EphemFilename)
+	// Open embedded JPLEPH file
+	EPHFILE, err := EphemFile.Open("JPLEPH")
 	if err != nil {
 		return 1 // remove magic number, use a constant.
 	}
