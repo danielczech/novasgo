@@ -1052,7 +1052,7 @@ func TestTer2Cel(t *testing.T) {
 	}
 
 	var jd_beg, jd_end float64
-	if error := EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
+	if error := EphemOpen(&jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Printf("Error %d Opening JPLEPH\n", error)
 	}
 

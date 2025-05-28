@@ -82,7 +82,7 @@ var (
 func init() {
 	var jd_beg, jd_end float64
 	var de_num int16
-	if error := EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
+	if error := EphemOpen(&jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Println("ephManager.go: init(). Error from EphemEpen. error= ", error)
 		os.Exit(int(error))
 	}
@@ -314,15 +314,11 @@ FILE *EPHFILE = NULL;
 
 ------------------------------------------------------------------------
 */
-func EphemOpen(ephem_name string,
-	jd_begin *float64, jd_end *float64,
+func EphemOpen(jd_begin *float64, jd_end *float64,
 	de_number *int16) int16 {
 
-	if ephem_name == "" {
-		ephem_name = GetEphemFilename()
-	}
 	// save for later when reading Buffer contents
-	EphemFilename = ephem_name
+	EphemFilename = GetEphemFilename()
 
 	var i int16
 
@@ -331,7 +327,7 @@ func EphemOpen(ephem_name string,
 	}
 
 	// Open JPL file ephem_name readonly
-	EPHFILE, err := os.Open(ephem_name)
+	EPHFILE, err := os.Open(EphemFilename)
 	if err != nil {
 		return 1 // remove magic number, use a constant.
 	}

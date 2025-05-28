@@ -140,7 +140,7 @@ func TestEphemOpen(t *testing.T) {
 	ex_jd_begin := 2.3054245e+06
 	ex_jd_end := 2.5250085e+06
 	ex_de_number := int16(405)
-	rtn := EphemOpen("", &jd_begin, &jd_end,
+	rtn := EphemOpen(&jd_begin, &jd_end,
 		&de_number)
 	if rtn != 0 {
 		fmt.Println("Got rtn= ", rtn, " expected 0")
@@ -242,7 +242,7 @@ func TestState(t *testing.T) {
 	var jd_end float64
 	var de_number int16
 
-	rtn := EphemOpen("", &jd_begin, &jd_end,
+	rtn := EphemOpen(&jd_begin, &jd_end,
 		&de_number)
 
 	if rtn != 0 {

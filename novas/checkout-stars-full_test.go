@@ -95,7 +95,7 @@ func TestStarsFull(t *testing.T) {
 	/*
 	   Open the JPL ephemeris file.
 	*/
-	if error = EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
+	if error = EphemOpen(&jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Println("Error opending JPLEPH")
 		t.Fail()
 	}
