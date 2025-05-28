@@ -10,6 +10,16 @@ import (
 	"testing"
 )
 
+var ephFilename string
+
+func TestMain(m *testing.M) {
+	ephFilename = os.Getenv("EPHEM_FILE")
+	if ephFilename == "" {
+		ephFilename = "JPLEPH"
+	}
+	os.Exit(m.Run())
+}
+
 func TestReadBinaryFloa64Slice(t *testing.T) {
 	n := 2
 	b := []byte{0x18, 0x2d, 0x44, 0x54, 0xfb, 0x21, 0x09, 0x40,
@@ -64,7 +74,8 @@ func TestReadEphemHeader(t *testing.T) {
 	expectedEh.LPT[0] = 899
 	expectedEh.LPT[1] = 10
 	expectedEh.LPT[2] = 4
-	fp, err := os.Open("JPLEPH")
+
+	fp, err := os.Open(ephFilename)
 	if err != nil {
 		fmt.Println("Error opening JPLEPH")
 		t.Fail()
@@ -132,7 +143,6 @@ func TestReadBinaryIntSlice(t *testing.T) {
 */
 
 func TestEphemOpen(t *testing.T) {
-	ephFilename := "JPLEPH"
 	var jd_begin float64
 	var jd_end float64
 	var de_number int16
@@ -238,7 +248,6 @@ func TestState(t *testing.T) {
 	expTargetVel[1] = -0.000553317582229670
 	expTargetVel[2] = -0.000184376219255533
 
-	ephFilename := "JPLEPH"
 	var jd_begin float64
 	var jd_end float64
 	var de_number int16
