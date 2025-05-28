@@ -80,19 +80,22 @@ var (
 )
 
 func init() {
-	// Get JPLEPH location from environment variable
-	EphemFilename = os.Getenv("EPHEM_FILE")
-	if EphemFilename == "" {
-		EphemFilename = "JPLEPH"
-	}
-	fmt.Printf("JPLEPH file: %s", EphemFilename)
-
 	var jd_beg, jd_end float64
 	var de_num int16
-	if error := EphemOpen(EphemFilename, &jd_beg, &jd_end, &de_num); error != 0 {
+	if error := EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Println("ephManager.go: init(). Error from EphemEpen. error= ", error)
 		os.Exit(int(error))
 	}
+}
+
+func GetEphemFilename() string {
+	// Get JPLEPH location from environment variable
+	ephemFilename := os.Getenv("EPHEM_FILE")
+	if ephemFilename == "" {
+		ephemFilename = "JPLEPH"
+		fmt.Printf("Using default ephem file: %s", ephemFilename)
+	}
+	return ephemFilename
 }
 
 // readFloqt64Slice is a helper function to read 4 bytes from file and cast as int
@@ -174,7 +177,8 @@ func ReadBinary2EphemHeader(r io.Reader) error {
 
 func ReadBinary2Buffer(offset int64) error {
 	// Open JPL file ephem_name readonly
-	EPHFILE, err := os.Open(EphemFilename)
+	ephemFilename := GetEphemFilename()
+	EPHFILE, err := os.Open(ephemFilename)
 	if err != nil {
 		fmt.Println("Error opening JPL file")
 		return err
@@ -314,6 +318,9 @@ func EphemOpen(ephem_name string,
 	jd_begin *float64, jd_end *float64,
 	de_number *int16) int16 {
 
+	if ephem_name == "" {
+		ephem_name = GetEphemFilename()
+	}
 	// save for later when reading Buffer contents
 	EphemFilename = ephem_name
 

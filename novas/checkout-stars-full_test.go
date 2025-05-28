@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"math"
 	"testing"
-	"os"
 )
 
 /*
@@ -96,11 +95,7 @@ func TestStarsFull(t *testing.T) {
 	/*
 	   Open the JPL ephemeris file.
 	*/
-	ephFilename := os.Getenv("EPHEM_FILE")
-	if ephFilename == "" {
-		ephFilename = "JPLEPH"
-	}
-	if error = EphemOpen(ephFilename, &jd_beg, &jd_end, &de_num); error != 0 {
+	if error = EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Println("Error opending JPLEPH")
 		t.Fail()
 	}

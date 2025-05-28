@@ -6,7 +6,6 @@ import (
 	"math"
 	"strings"
 	"testing"
-	"os"
 )
 
 const (
@@ -1052,12 +1051,8 @@ func TestTer2Cel(t *testing.T) {
 		fmt.Printf("Error %d MakeCatEntry (Mars)\n", error)
 	}
 
-	ephFilename := os.Getenv("EPHEM_FILE")
-	if ephFilename == "" {
-		ephFilename = "JPLEPH"
-	}
 	var jd_beg, jd_end float64
-	if error := EphemOpen(ephFilename, &jd_beg, &jd_end, &de_num); error != 0 {
+	if error := EphemOpen("", &jd_beg, &jd_end, &de_num); error != 0 {
 		fmt.Printf("Error %d Opening JPLEPH\n", error)
 	}
 
