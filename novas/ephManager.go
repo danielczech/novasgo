@@ -56,12 +56,14 @@ const (
 	SEEKSET   = 0 // Seek into file from beginning. Seem man fseek and os.File
 	SEEKCUR   = 1 // Seek into file from current position
 	SEEKEND   = 2 // Seek into file from end
+	EphemFileName = "JPLEPH"
 )
 
 //go:embed JPLEPH
 var EphemFile embed.FS
 
 var (
+
 	eh EphemHeader
 
 	//LPT [3]int32 // LPT[3] int[]
@@ -168,7 +170,7 @@ func ReadBinary2EphemHeader(r io.Reader) error {
 }
 
 func ReadBinary2Buffer(offset int64) error {
-	EPHFILE, err := EphemFile.ReadFile("JPLEPH")
+	EPHFILE, err := EphemFile.ReadFile(EphemFileName)
 	if err != nil {
 		fmt.Println("Error reading JPL file")
 		return err
@@ -316,7 +318,7 @@ func EphemOpen(jd_begin *float64, jd_end *float64,
 	}
 
 	// Open embedded JPLEPH file
-	EPHFILE, err := EphemFile.Open("JPLEPH")
+	EPHFILE, err := EphemFile.Open(EphemFileName)
 	if err != nil {
 		return 1 // remove magic number, use a constant.
 	}
